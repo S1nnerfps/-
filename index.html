@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal CS Coach — CS2 AI 战术助手</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ==================== 首页 ==================== -->
+  <div id="page-home" class="page active">
+    <header class="home-header">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <h1>Personal CS Coach</h1>
+      </div>
+      <p class="subtitle">CS2 AI 驱动的实时战术助手</p>
+    </header>
+    <main class="map-select">
+      <h2>选择地图</h2>
+      <div class="map-grid" id="map-grid"></div>
+      <div class="home-actions">
+        <button class="btn btn-secondary" id="btn-open-editor">📐 战术编辑器</button>
+        <button class="btn btn-secondary" id="btn-open-datacenter">📊 车队数据中心</button>
+        <button class="btn btn-secondary" id="btn-open-api-settings">⚙ API 设置</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== 画板页面（比赛仪表盘 + 战术编辑器合一） ==================== -->
+  <div id="page-canvas" class="page">
+    <header class="canvas-header">
+      <button class="btn btn-back" id="btn-canvas-back">← 返回</button>
+      <div class="header-center">
+        <span class="map-name" id="canvas-map-name">Mirage</span>
+        <span class="canvas-mode-badge" id="canvas-mode-badge">比赛模式</span>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-primary" id="btn-quick-analysis" title="快速分析">⚡ 快速分析</button>
+        <button class="btn btn-secondary" id="btn-deep-analysis" title="深度分析">🔬 深度分析</button>
+      </div>
+    </header>
+
+    <div class="canvas-body">
+      <!-- 地图画板 -->
+      <div class="canvas-map-area">
+        <canvas id="canvas-main" width="800" height="800"></canvas>
+        <div class="canvas-hint" id="canvas-hint">选择工具后在图上拖拽绘制</div>
+      </div>
+
+      <!-- 右侧画笔工具面板 -->
+      <div class="canvas-tool-panel">
+        <h3>🖊 画笔工具</h3>
+
+        <div class="brush-tools">
+          <!-- 箭头 -->
+          <button class="brush-btn" data-tool="arrow" title="箭头 — 进攻/移动方向">
+            <span class="brush-icon">→</span>
+            <span class="brush-label">箭头</span>
+            <span class="brush-desc">方向/进攻</span>
+            <span class="brush-indicator" style="background:#D13838"></span>
+          </button>
+
+          <!-- 圆圈 -->
+          <button class="brush-btn" data-tool="circle" title="圆圈 — 投掷物/站位">
+            <span class="brush-icon">◎</span>
+            <span class="brush-label">圆圈</span>
+            <span class="brush-desc">投掷物/站位</span>
+            <span class="brush-indicator" style="background:#58a6ff"></span>
+          </button>
+
+          <!-- 墙壁 / 防线 -->
+          <button class="brush-btn" data-tool="wall" title="墙壁 — 防守防线">
+            <span class="brush-icon">⊟</span>
+            <span class="brush-label">墙壁</span>
+            <span class="brush-desc">防守/阻挡</span>
+            <span class="brush-indicator" style="background:#3878C8"></span>
+          </button>
+
+          <div class="tool-separator"></div>
+
+          <!-- 烟雾弹 -->
+          <button class="brush-btn" data-tool="smoke" title="烟雾弹">
+            <span class="brush-icon">💨</span>
+            <span class="brush-label">烟雾弹</span>
+            <span class="brush-desc">遮挡视野</span>
+            <span class="brush-indicator" style="background:#888"></span>
+          </button>
+
+          <!-- 闪光弹 -->
+          <button class="brush-btn" data-tool="flash" title="闪光弹">
+            <span class="brush-icon">⚡</span>
+            <span class="brush-label">闪光弹</span>
+            <span class="brush-desc">致盲对手</span>
+            <span class="brush-indicator" style="background:#F5C842"></span>
+          </button>
+
+          <!-- 燃烧弹 -->
+          <button class="brush-btn" data-tool="molotov" title="燃烧弹">
+            <span class="brush-icon">🔥</span>
+            <span class="brush-label">燃烧弹</span>
+            <span class="brush-desc">区域封锁</span>
+            <span class="brush-indicator" style="background:#E8751A"></span>
+          </button>
+
+          <!-- 手雷 -->
+          <button class="brush-btn" data-tool="nade" title="手雷">
+            <span class="brush-icon">💣</span>
+            <span class="brush-label">手雷</span>
+            <span class="brush-desc">范围伤害</span>
+            <span class="brush-indicator" style="background:#D13838"></span>
+          </button>
+        </div>
+
+        <div class="canvas-actions">
+          <button class="btn btn-ghost btn-small" id="btn-undo">↩ 撤销</button>
+          <button class="btn btn-ghost btn-small" id="btn-clear-all">清空画布</button>
+        </div>
+
+        <!-- 敌方队伍选择（仅比赛模式） -->
+        <div class="side-toggle" id="side-toggle" style="display:none">
+          <span class="side-label">当前标注方：</span>
+          <button class="btn btn-small btn-side ct-side active" data-side="CT">CT</button>
+          <button class="btn btn-small btn-side t-side" data-side="T">T</button>
+        </div>
+
+        <!-- 战术名称（仅编辑模式） -->
+        <div class="tactic-meta" id="tactic-meta" style="display:none">
+          <input type="text" class="tactic-name-input" placeholder="战术名称..." id="tactic-name">
+          <select class="style-select" id="tactic-style">
+            <option value="balanced">均衡</option>
+            <option value="aggressive">激进</option>
+            <option value="conservative">保守</option>
+          </select>
+        </div>
+
+        <!-- 编辑模式专用按钮 -->
+        <div class="editor-actions" id="editor-actions" style="display:none">
+          <button class="btn btn-primary" id="btn-save-tactic">💾 保存战术</button>
+          <button class="btn btn-secondary" id="btn-load-tactic">📂 加载战术</button>
+          <button class="btn btn-secondary" id="btn-ai-evaluate">🤖 AI 评估</button>
+          <button class="btn btn-ghost btn-small" id="btn-ai-optimize">✨ AI 优化</button>
+        </div>
+
+        <!-- 比赛模式专用按钮 -->
+        <div class="match-actions" id="match-actions">
+          <button class="btn btn-primary" id="btn-end-round">▶ 回合结束</button>
+          <button class="btn btn-secondary" id="btn-pause">⏸ 暂停分析</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部状态栏 -->
+    <div class="status-bar">
+      <span id="status-tool">工具：无</span>
+      <span>|</span>
+      <span id="status-marks">标记：0</span>
+      <span>|</span>
+      <span id="status-mode">模式：画板</span>
+    </div>
+  </div>
+
+  <!-- ==================== 快速分析弹窗 ==================== -->
+  <div class="modal-overlay" id="modal-quick-analysis">
+    <div class="modal-content modal-quick">
+      <h3>⚡ 快速分析</h3>
+      <div class="quick-result">
+        <div class="quick-tendency">
+          <span class="tendency-label">对手倾向</span>
+          <span class="tendency-value" id="qa-tendency">数据不足</span>
+          <span class="confidence" id="qa-confidence">置信度 0%</span>
+        </div>
+        <div class="quick-advice">
+          <span class="advice-label">💡 建议</span>
+          <p id="qa-advice">需要至少 3 条标记才能分析</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-qa-ignore">忽略</button>
+        <button class="btn btn-primary" id="btn-qa-adopt">✓ 采用建议</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 深度分析面板 ==================== -->
+  <div class="modal-overlay" id="modal-deep-analysis">
+    <div class="modal-content modal-deep">
+      <h3>🔬 深度分析</h3>
+      <div class="deep-tabs">
+        <button class="deep-tab active" data-tab="profile">对手画像</button>
+        <button class="deep-tab" data-tab="tactics">战术建议</button>
+      </div>
+      <div class="deep-panel" id="deep-profile">
+        <div class="profile-charts">
+          <div class="chart-box">
+            <h4>主攻方向</h4>
+            <canvas id="chart-attack-dir" width="300" height="150"></canvas>
+          </div>
+          <div class="chart-box">
+            <h4>防守站位分布</h4>
+            <canvas id="chart-defense-pos" width="300" height="150"></canvas>
+          </div>
+        </div>
+        <div class="profile-meta">
+          <div><strong>核心选手：</strong><span id="dp-core">待分析</span></div>
+          <div><strong>经济趋势：</strong><span id="dp-economy">待分析</span></div>
+        </div>
+      </div>
+      <div class="deep-panel" id="deep-tactics" style="display:none">
+        <ul class="tactics-list" id="deep-tactics-list"></ul>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btn-deep-export">📐 导出到编辑器</button>
+        <button class="btn btn-primary" id="btn-deep-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AI 评估弹窗 ==================== -->
+  <div class="modal-overlay" id="modal-ai-eval">
+    <div class="modal-content modal-eval">
+      <h3>📊 AI 战术评估</h3>
+      <div class="eval-body">
+        <canvas id="canvas-radar" width="260" height="260"></canvas>
+        <div class="eval-score">
+          <span class="score-big" id="eval-total-score">0</span>
+          <span class="score-unit">/ 100</span>
+        </div>
+        <div class="eval-lists">
+          <div class="eval-list">
+            <h4>✅ 优势</h4>
+            <ul id="eval-strengths"></ul>
+          </div>
+          <div class="eval-list">
+            <h4>⚠️ 风险</h4>
+            <ul id="eval-risks"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btn-eval-adjust">手动调整</button>
+        <button class="btn btn-primary" id="btn-eval-optimize">✨ AI 优化</button>
+        <button class="btn btn-ghost" id="btn-eval-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AI 优化对比弹窗 ==================== -->
+  <div class="modal-overlay" id="modal-ai-compare">
+    <div class="modal-content modal-compare">
+      <h3>🔍 AI 优化对比</h3>
+      <div class="compare-body">
+        <div class="compare-side">
+          <h4>原始方案</h4>
+          <canvas id="canvas-compare-orig" width="220" height="220"></canvas>
+          <span class="compare-score" id="compare-score-orig">0</span>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-side">
+          <h4>AI 优化方案</h4>
+          <canvas id="canvas-compare-ai" width="220" height="220"></canvas>
+          <span class="compare-score" id="compare-score-ai">0</span>
+        </div>
+      </div>
+      <div class="compare-changes">
+        <h4>变更说明</h4>
+        <ul id="compare-changes-list"></ul>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btn-compare-keep">保留原方案</button>
+        <button class="btn btn-primary" id="btn-compare-adopt">采用 AI 优化</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 车队数据中心 ==================== -->
+  <div id="page-datacenter" class="page">
+    <header class="datacenter-header">
+      <button class="btn btn-back" id="btn-dc-back">← 返回</button>
+      <h2>📊 车队数据中心</h2>
+    </header>
+    <div class="datacenter-body">
+      <div class="dc-stats-grid" id="dc-stats"></div>
+    </div>
+  </div>
+
+  <!-- ==================== API 设置弹窗 ==================== -->
+  <div class="modal-overlay" id="modal-api-settings">
+    <div class="modal-content modal-api">
+      <h3>⚙ API 设置</h3>
+      <div class="api-form">
+        <div class="api-row">
+          <label>提供商</label>
+          <select id="api-provider">
+            <option value="openai">OpenAI</option>
+            <option value="deepseek">DeepSeek</option>
+            <option value="claude">Claude (兼容)</option>
+            <option value="custom">自定义</option>
+          </select>
+        </div>
+        <div class="api-row">
+          <label>API Key</label>
+          <input type="password" id="api-key" placeholder="sk-..." />
+          <button class="btn btn-small btn-secondary" id="btn-test-api">🔗 测试连接</button>
+        </div>
+        <div class="api-row">
+          <label>模型</label>
+          <select id="api-model">
+            <option value="gpt-4o">gpt-4o</option>
+            <option value="gpt-4o-mini">gpt-4o-mini</option>
+            <option value="gpt-4-turbo">gpt-4-turbo</option>
+          </select>
+        </div>
+        <div class="api-row api-advanced">
+          <label>端点 URL</label>
+          <input type="text" id="api-endpoint" placeholder="https://api.openai.com/v1/chat/completions" />
+        </div>
+        <div class="api-status" id="api-status">
+          <span id="api-status-text">未配置</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-api-cancel">取消</button>
+        <button class="btn btn-primary" id="btn-api-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 跨页面通用 Dialog -->
+  <div class="modal-overlay" id="modal-dialog">
+    <div class="modal-content modal-dialog">
+      <h3 id="dialog-title"></h3>
+      <div id="dialog-body"></div>
+      <div class="modal-actions" id="dialog-actions"></div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/maps.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

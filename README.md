@@ -1,0 +1,102 @@
+# Personal CS Coach — CS2 AI 战术助手
+
+> 预调制 CS2 战术 AI Agent · 用户自接 DeepSeek API · 本地推理闭环
+
+**设计思维期末大作业 · 产品路演**  
+答辩日期：2026-06-23
+
+---
+
+## 🎯 一句话定位
+
+让 AI 成为业余 CS2 战队的战术教练——填补「业余玩家 → 专业分析」的鸿沟。
+
+---
+
+## 🧠 项目概述
+
+CS2 玩家在死亡视角有 8 秒空闲时间。**Personal CS Coach** 运行在第二屏幕（平板/笔记本），让玩家在阵亡时随手标注对手信息，AI 自动分析对手战术倾向，在回合间隙给出可操作的建议。
+
+核心壁垒：**预调制的 CS2 战术 Agent**。通用 LLM 不懂地图点位和战术逻辑，我们的 Agent 预训练了 7 张竞赛地图的拓扑结构、标准报点术语体系、经典战术模式，发货后用户仅需自行接入 DeepSeek API 即可获得 CS2 专属战术分析能力。
+
+---
+
+## 🛠 技术栈
+
+| 层 | 技术 |
+|---|------|
+| 前端 | 原生 HTML + Canvas（无框架，零依赖） |
+| AI 引擎 | 本地规则引擎（5 维评估 + 快速/深度分析） |
+| API 接入 | OpenAI / DeepSeek / Claude / 自定义端点 |
+| 持久化 | localStorage（战术库 + API 配置） |
+
+---
+
+## 🚀 快速开始
+
+```bash
+# 直接双击打开
+index.html
+
+# 或启动本地服务器（可选）
+python -m http.server 8080
+```
+
+### 接入 AI API（可选）
+
+1. 打开「⚙ API 设置」
+2. 选择提供商（OpenAI / DeepSeek / Claude）
+3. 填入 API Key → 测试连接 → 保存
+4. 分析时自动调用 API，失败时回退本地引擎
+
+---
+
+## 📁 项目结构
+
+```
+├── index.html          # 产品原型入口
+├── css/
+│   └── style.css       # 全局样式（深色 CS 风格）
+├── js/
+│   ├── utils.js        # 工具函数
+│   ├── maps.js         # 7 张 CS2 地图数据
+│   ├── data.js         # 数据持久化模型
+│   ├── ai.js           # 本地规则引擎（5 维评估）
+│   ├── api.js          # API 调用层（OpenAI/DeepSeek/Claude）
+│   ├── render.js       # Canvas 渲染引擎
+│   └── app.js          # 主控逻辑
+├── img/maps/           # 7 张地图图片（Mirage/Inferno/Dust2/Nuke/Ancient/Anubis/Overpass）
+├── AAA.md              # 答辩演示脚本 + Q&A 题库
+├── task.md             # 任务拆解与行动指南
+├── Dialogue.md         # 项目设计决策记录
+└── Personal_CS_Coach_答辩PPT.pptx  # 13 页答辩 PPT
+```
+
+---
+
+## 🎮 功能概览
+
+| 功能 | 描述 |
+|------|------|
+| 🎨 **画板标注** | 7 种画笔（箭头/圆圈/墙壁/烟/闪/火/雷），CT 蓝 vs T 黄，拖拽绘图 |
+| ⚡ **快速分析** | 3-5s 分析对手倾向 + 置信度标注 |
+| 🔬 **深度分析** | 对手画像 + 战术建议 + 可采纳标记 |
+| 🤖 **AI 评估** | 5 维雷达图 + 优化前后对比 |
+| 💾 **战术库** | 保存/加载/列表管理（localStorage） |
+| ⚙ **API 设置** | 支持 4 种提供商 + 连接测试 |
+
+---
+
+## 📦 交付物（对应 task.md 要求）
+
+| # | 交付物 | 文件 |
+|---|--------|------|
+| 1 | 产品原型 | `index.html`（浏览器直接打开） |
+| 2 | MVP Demo 视频 | （待录制） |
+| 3 | 答辩 PPT | `Personal_CS_Coach_答辩PPT.pptx` |
+
+---
+
+## 📄 License
+
+MIT

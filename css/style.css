@@ -1,0 +1,214 @@
+/* ============================================================
+   Personal CS Coach — 全局样式 v3
+   画板式设计 / 三种画笔工具
+   ============================================================ */
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-elevated: #2a3040;
+  --border: #30363d;
+  --border-bright: #484f58;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --ct-blue: #3878C8;
+  --t-yellow: #F5C842;
+  --accent-green: #3A8C3C;
+  --accent-orange: #E8751A;
+  --accent-cyan: #58a6ff;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-lg: 12px;
+  --transition: 0.18s ease;
+  --font-mono: 'Cascadia Code','Fira Code','Consolas',monospace;
+  --font-sans: 'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg-primary);color:var(--text-primary);font-family:var(--font-sans);font-size:14px;line-height:1.5}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* 页面容器 */
+.page{display:none;flex-direction:column;height:100vh;width:100vw;position:absolute;top:0;left:0}
+.page.active{display:flex}
+
+/* 按钮体系 */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-tertiary);color:var(--text-primary);font-size:13px;font-family:var(--font-sans);cursor:pointer;transition:all var(--transition);white-space:nowrap}
+.btn:hover{background:var(--bg-elevated);border-color:var(--border-bright)}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--ct-blue);border-color:var(--ct-blue);color:#fff;font-weight:600}
+.btn-primary:hover{background:#4a8ad8}
+.btn-secondary{background:var(--bg-tertiary)}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--text-secondary)}
+.btn-ghost:hover{color:var(--text-primary);background:rgba(255,255,255,0.04)}
+.btn-back{background:transparent;border:none;color:var(--text-secondary);font-size:14px;padding:5px 8px}
+.btn-back:hover{color:var(--text-primary)}
+.btn-small{padding:4px 10px;font-size:11px}
+.hidden{display:none!important}
+.text-muted{color:var(--text-muted)}
+.text-ct{color:var(--ct-blue)}
+.text-t{color:var(--t-yellow)}
+
+/* ============================================================
+   首页
+   ============================================================ */
+.home-header{text-align:center;padding:48px 20px 20px}
+.logo{display:flex;align-items:center;justify-content:center;gap:12px}
+.logo-icon{font-size:36px;color:var(--accent-cyan)}
+.logo h1{font-size:36px;font-weight:700;letter-spacing:1px;color:var(--accent-cyan)}
+.subtitle{color:var(--text-secondary);margin-top:6px;font-size:15px}
+.map-select{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 40px;gap:24px;overflow-y:auto}
+.map-select h2{font-size:18px;font-weight:600;color:var(--text-secondary)}
+.map-grid{display:grid;grid-template-columns:repeat(4,180px);gap:16px;justify-content:center}
+@media(max-width:900px){.map-grid{grid-template-columns:repeat(3,160px)}}
+@media(max-width:600px){.map-grid{grid-template-columns:repeat(2,150px)}}
+.map-card{background:var(--bg-secondary);border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;cursor:pointer;transition:all 0.25s;text-align:center}
+.map-card:hover{border-color:var(--accent-cyan);transform:translateY(-2px);box-shadow:0 6px 20px rgba(88,166,255,0.15)}
+.map-card canvas{width:100%;height:120px;display:block}
+.map-card-name{padding:10px;font-weight:600;font-size:14px;color:var(--text-primary)}
+.home-actions{display:flex;gap:12px;padding-bottom:20px}
+
+/* ============================================================
+   画板页面
+   ============================================================ */
+.canvas-header{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);min-height:46px}
+.canvas-mode-badge{font-size:11px;background:var(--accent-cyan);color:#000;padding:2px 8px;border-radius:10px;font-weight:600}
+.header-center{display:flex;align-items:center;gap:10px}
+.map-name{font-weight:700;font-size:15px;color:var(--accent-cyan)}
+.header-right{display:flex;gap:6px}
+
+.canvas-body{display:flex;flex:1;overflow:hidden}
+
+/* 地图画板区 */
+.canvas-map-area{flex:1;position:relative;display:flex;align-items:center;justify-content:center;background:var(--bg-primary)}
+.canvas-map-area canvas{max-width:100%;max-height:100%;cursor:crosshair}
+.canvas-hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);padding:4px 14px;border-radius:12px;font-size:11px;color:var(--text-muted);pointer-events:none}
+
+/* 画笔工具面板 */
+.canvas-tool-panel{width:200px;display:flex;flex-direction:column;background:var(--bg-secondary);border-left:1px solid var(--border);padding:12px 10px;gap:10px;overflow-y:auto}
+.canvas-tool-panel h3{font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:2px}
+
+.brush-tools{display:flex;flex-direction:column;gap:4px}
+.brush-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px;background:var(--bg-tertiary);border:2px solid transparent;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);text-align:left}
+.brush-btn:hover{background:var(--bg-elevated);border-color:var(--border-bright)}
+.brush-btn.active{border-color:var(--accent-cyan);background:rgba(88,166,255,0.12)}
+.brush-icon{font-size:20px;width:28px;text-align:center;flex-shrink:0}
+.brush-label{font-size:13px;font-weight:600;color:var(--text-primary)}
+.brush-desc{font-size:10px;color:var(--text-muted)}
+.brush-indicator{width:6px;height:6px;border-radius:50%;margin-left:auto;flex-shrink:0}
+
+.canvas-actions{display:flex;gap:4px;margin-top:2px}
+.canvas-actions .btn{flex:1;justify-content:center}
+
+/* 队伍切换 */
+.side-toggle{display:flex;flex-direction:column;gap:5px;padding-top:4px;border-top:1px solid var(--border)}
+.side-label{font-size:11px;color:var(--text-muted)}
+.btn-side{padding:4px 0;text-align:center;width:100%}
+.ct-side{color:var(--ct-blue)}
+.t-side{color:var(--t-yellow)}
+.btn-side.active.ct-side{background:var(--ct-blue);color:#fff}
+.btn-side.active.t-side{background:var(--t-yellow);color:#000}
+
+/* 战术元数据 */
+.tactic-meta{display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--border);padding-top:8px}
+.tactic-name-input{padding:6px 8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;font-family:var(--font-sans)}
+.tactic-name-input:focus{outline:none;border-color:var(--accent-cyan)}
+.style-select{padding:6px 8px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;cursor:pointer}
+
+.editor-actions,.match-actions{display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--border);padding-top:8px}
+.editor-actions .btn,.match-actions .btn{flex:1;justify-content:center}
+
+/* 状态栏 */
+.status-bar{display:flex;align-items:center;gap:12px;padding:5px 14px;background:var(--bg-secondary);border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)}
+.status-api{color:var(--accent-cyan);margin-left:auto}
+.status-api.offline{color:var(--text-muted)}
+.status-api.api{color:var(--accent-green)}
+
+/* API 设置弹窗 */
+.modal-api{width:480px}
+.api-form{display:flex;flex-direction:column;gap:10px}
+.api-row{display:flex;align-items:center;gap:8px}
+.api-row label{width:60px;font-size:12px;color:var(--text-secondary);flex-shrink:0}
+.api-row input,.api-row select{flex:1;padding:6px 10px;background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:12px;font-family:var(--font-sans)}
+.api-row input:focus,.api-row select:focus{outline:none;border-color:var(--accent-cyan)}
+.api-row .btn-small{flex-shrink:0}
+.api-status{padding:8px 12px;background:var(--bg-tertiary);border-radius:var(--radius-sm);font-size:11px;text-align:center}
+.api-status.success{color:var(--accent-green)}
+.api-status.error{color:var(--t-yellow)}
+.api-status.loading{color:var(--accent-cyan)}
+
+/* ============================================================
+   弹窗通用
+   ============================================================ */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.72);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.active{display:flex}
+.modal-content{background:var(--bg-secondary);border:1px solid var(--border-bright);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow);max-width:90vw;max-height:85vh;overflow-y:auto}
+.modal-content h3{font-size:15px;font-weight:600;margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+
+/* Dialog */
+.modal-dialog{width:420px}
+
+/* 快速分析 */
+.modal-quick{width:400px}
+.quick-tendency{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.tendency-label{font-size:11px;color:var(--text-muted)}
+.tendency-value{font-weight:700;font-size:14px;color:var(--accent-orange)}
+.confidence{font-size:10px;color:var(--accent-cyan);background:rgba(88,166,255,0.1);padding:2px 8px;border-radius:10px}
+.quick-advice{background:var(--bg-tertiary);border-radius:var(--radius);padding:10px}
+.advice-label{font-size:11px;color:var(--text-muted)}
+.quick-advice p{margin-top:4px;font-size:13px}
+
+/* 深度分析 */
+.modal-deep{width:580px}
+.deep-tabs{display:flex;margin-bottom:12px;border-bottom:2px solid var(--border)}
+.deep-tab{padding:7px 16px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--transition);font-family:var(--font-sans)}
+.deep-tab.active{color:var(--accent-cyan);border-bottom-color:var(--accent-cyan)}
+.deep-panel{min-height:180px}
+.profile-charts{display:flex;gap:14px;margin-bottom:10px}
+.chart-box{flex:1;background:var(--bg-tertiary);border-radius:var(--radius);padding:10px}
+.chart-box h4{font-size:11px;color:var(--text-muted);margin-bottom:5px}
+.chart-box canvas{width:100%;display:block}
+.profile-meta{display:flex;gap:20px;font-size:12px;color:var(--text-secondary)}
+.tactics-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.tactics-list li{background:var(--bg-tertiary);border-radius:var(--radius);padding:8px 10px;font-size:12px;border-left:3px solid var(--accent-cyan)}
+
+/* AI 评估 */
+.modal-eval{width:520px}
+.eval-body{display:flex;flex-wrap:wrap;gap:14px}
+.eval-body canvas{width:240px;height:240px}
+.eval-score{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:70px}
+.score-big{font-size:38px;font-weight:700;color:var(--accent-cyan);font-family:var(--font-mono)}
+.score-unit{font-size:12px;color:var(--text-muted)}
+.eval-lists{flex:1;display:flex;flex-direction:column;gap:8px;min-width:160px}
+.eval-list h4{font-size:11px;margin-bottom:3px}
+.eval-list ul{list-style:none;display:flex;flex-direction:column;gap:2px}
+.eval-list li{font-size:11px;color:var(--text-secondary);padding:3px 7px;background:var(--bg-tertiary);border-radius:var(--radius-sm)}
+
+/* AI 优化对比 */
+.modal-compare{width:600px}
+.compare-body{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
+.compare-side{text-align:center}
+.compare-side h4{font-size:11px;color:var(--text-muted);margin-bottom:5px}
+.compare-side canvas{border:1px solid var(--border);border-radius:var(--radius)}
+.compare-score{display:block;margin-top:5px;font-size:18px;font-weight:700;font-family:var(--font-mono);color:var(--accent-cyan)}
+.compare-vs{font-size:16px;font-weight:700;color:var(--text-muted)}
+.compare-changes h4{font-size:11px;color:var(--text-muted);margin-bottom:4px}
+.compare-changes ul{list-style:disc;padding-left:18px;font-size:11px;color:var(--text-secondary)}
+
+/* ============================================================
+   车队数据中心
+   ============================================================ */
+.datacenter-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border)}
+.datacenter-header h2{font-size:16px}
+.datacenter-body{flex:1;padding:18px;overflow-y:auto}
+.dc-stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.dc-stat-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.dc-stat-card h4{font-size:11px;color:var(--text-muted);margin-bottom:6px}
+.dc-stat-card .stat-value{font-size:22px;font-weight:700;font-family:var(--font-mono);color:var(--accent-cyan)}
+.dc-stat-card .stat-detail{font-size:11px;color:var(--text-secondary);margin-top:3px}
