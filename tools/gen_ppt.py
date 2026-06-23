@@ -41,7 +41,6 @@ def bar(slide, l, t, h, color=CYAN, w=Inches(0.06)): return rect(slide, l, t, w,
 def hr(slide, l, t, w, color=CYAN, h=Inches(0.025)): return rect(slide, l, t, w, h, color)
 def pg(slide, n): txt(slide, Inches(12.2), Inches(7.05), Inches(1), Inches(0.35), str(n), size=10, color=DIM, align=PP_ALIGN.RIGHT)
 def footer(slide, text="Personal CS Coach — Agent + API 架构  |  CS2 战术智能"): txt(slide, Inches(0.5), Inches(7.1), Inches(8), Inches(0.3), text, size=9, color=DIM)
-def ss(slide, l, t, w, h, label="📸 截图区域"): rect(slide, l, t, w, h, SURFACE); rect(slide, l, t, w, Inches(0.025), CYAN); txt(slide, l+Inches(0.15), t+h/2-Inches(0.3), w-Inches(0.3), Inches(0.5), label, size=12, color=DIM, align=PP_ALIGN.CENTER)
 
 # ============================
 # 0. 封面
@@ -114,7 +113,6 @@ bullets(s, Inches(6.9), Inches(2.3), Inches(5.8), Inches(2.5), [
 ], size=14)
 rect(s, Inches(0.6), Inches(5.2), Inches(12.1), Inches(0.8), SURFACE)
 txt(s, Inches(1.0), Inches(5.35), Inches(11.3), Inches(0.5), '🎯 「Personal CS Coach 不是又一个战术画板——它是一个真正理解 CS2 地图、站位和战术的 AI Agent。」', size=17, color=YELLOW, bold=True, align=PP_ALIGN.CENTER)
-ss(s, Inches(0.6), Inches(6.25), Inches(12.1), Inches(0.8), "📸 CS2 比赛画面 / 现有竞品对比（视频演示：0:00-0:30）")
 footer(s); pg(s, 3)
 
 # ============================
@@ -238,7 +236,6 @@ for i, (title, desc, note) in enumerate([
     rect(s, x, Inches(1.4), Inches(4.0), Inches(5.5), SURFACE)
     txt(s, x+Inches(0.2), Inches(1.55), Inches(3.6), Inches(0.5), title, size=14, color=CYAN, bold=True)
     txt(s, x+Inches(0.2), Inches(2.1), Inches(3.6), Inches(2.8), desc, size=11, color=DIM)
-    ss(s, x+Inches(0.15), Inches(5.0), Inches(3.7), Inches(1.5))
     rect(s, x+Inches(0.15), Inches(6.6), Inches(3.7), Inches(0.3), CYAN)
     txt(s, x+Inches(0.3), Inches(6.65), Inches(3.4), Inches(0.2), note, size=9, color=BG, align=PP_ALIGN.CENTER)
 footer(s); pg(s, 8)
