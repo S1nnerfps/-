@@ -19,7 +19,8 @@ const App = {
 
   // ==================== 全局事件绑定 ====================
   _bindEvents() {
-    // 首页
+    // 首页 — 生成地图卡片
+    this._buildMapCards();
     $('map-grid').addEventListener('click', e => { const el = e.target.closest('.map-card'); if (el) this._showMapDialog(el.dataset.k); });
     $('btn-open-editor').onclick = () => this.savedTactics.length ? this._showTacticListDialog() : this._openEditor('mirage');
     $('btn-open-datacenter').onclick = () => this._openDatacenter();
@@ -72,15 +73,26 @@ const App = {
   },
 
   // ==================== 首页 ====================
+  _buildMapCards() {
+    const grid = $('map-grid');
+    if (grid.children.length) return;
+    getMapKeys().forEach(key => {
+      const md = getMap(key);
+      const card = document.createElement('div');
+      card.className = 'map-card';
+      card.dataset.k = key;
+      card.innerHTML = `<canvas width="180" height="120"></canvas><div class="map-card-name">${md.name}</div>`;
+      grid.appendChild(card);
+      setTimeout(() => Renderer.renderMapCard(card.querySelector('canvas'), key), 80);
+    });
+  },
+
   _showMapDialog(k) {
     const md = getMap(k);
     this._dialog(`${md.name} (${md.nameCN})`, '<p>选择模式</p>', [
       { text:'🎮 比赛', cls:'btn-primary', fn:()=> this._enterMode(k,'match') },
       { text:'📐 编辑', cls:'btn-secondary', fn:()=> this._enterMode(k,'editor') },
     ]);
-    // 动态生成地图卡片
-    const grid = $('map-grid');
-    if (!grid.children.length) getMapKeys().forEach(key => { const md = getMap(key); const card = document.createElement('div'); card.className = 'map-card'; card.dataset.k = key; card.innerHTML = `<canvas width="180" height="120"></canvas><div class="map-card-name">${md.name}</div>`; grid.appendChild(card); setTimeout(() => Renderer.renderMapCard(card.querySelector('canvas'), key), 80); });
   },
 
   _dialog(title, bodyHTML, buttons) {
@@ -191,7 +203,13 @@ const App = {
 
   // ==================== API 设置 ====================
   _readAPIConfig() { return { provider:$('api-provider').value, apiKey:$('api-key').value.trim(), model:$('api-model').value, endpoint:$('api-endpoint').value.trim(), enabled:!!$('api-key').value.trim() }; },
-  _showAPISettings() { const cfg = APIService.loadConfig(); Object.entries({provider:cfg.provider, apiKey:cfg.apiKey, model:cfg.model, endpoint:cfg.endpoint}).forEach(([k,v])=>$(`api-${k}`).value=v||''); this._setAPIStatus(cfg.enabled&&cfg.apiKey?`已配置:${cfg.model}`:'未配置', cfg.enabled?'success':''); Utils.showModal('modal-api-settings'); },
+  _showAPISettings() {
+    const cfg = APIService.loadConfig();
+    const fields = { provider: cfg.provider, 'api-key': cfg.apiKey, model: cfg.model, endpoint: cfg.endpoint };
+    Object.entries(fields).forEach(([id, v]) => { const el = $(id); if (el) el.value = v || ''; });
+    this._setAPIStatus(cfg.enabled && cfg.apiKey ? `已配置: ${cfg.model}` : '未配置', cfg.enabled ? 'success' : '');
+    Utils.showModal('modal-api-settings');
+  },
   _setAPIStatus(text, cls) { $('api-status-text').textContent = text; $('api-status').className = 'api-status ' + (cls||''); },
 
   // ==================== 数据中心 ====================

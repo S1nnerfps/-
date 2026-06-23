@@ -102,7 +102,7 @@ python -m http.server 8080
 | # | 交付物 | 文件 |
 |---|--------|------|
 | 1 | 产品原型 | `index.html`（浏览器直接打开） |
-| 2 | MVP Demo 视频 | （待补充） |
+| 2 | MVP Demo 视频 | `Personal CS Coach — CS2 AI 战术助手.mp4` |
 | 3 | 答辩 PPT | `Personal_CS_Coach_答辩PPT.pptx` |
 
 ---
