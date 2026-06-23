@@ -205,6 +205,23 @@ const Renderer = {
     }
   },
 
+  _drawStar(ctx, cx, cy, spikes, outerR, innerR) {
+    let rot = Math.PI / 2 * 3;
+    const step = Math.PI / spikes;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - outerR);
+    for (let i = 0; i < spikes; i++) {
+      ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+      rot += step;
+      ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+      rot += step;
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#D13838';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  },
+
   /** 绘制拖拽预览（半透明） */
   drawPreview(ctx, tool, params, side) {
     ctx.save(); ctx.globalAlpha = 0.55;

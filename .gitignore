@@ -17,5 +17,8 @@ Thumbs.db
 # Old version PPT
 TacticFlow_答辩PPT.pptx
 
+# Large media files (share via cloud/USB instead)
+*.mp4
+
 # Tools (generation scripts, not part of deliverable)
 tools/download_maps.py
